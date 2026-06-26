@@ -58,8 +58,7 @@
 
         .auth-cinematic {
             flex: 1.2;
-            background: linear-gradient(270deg, #10161b 0%, rgba(16,22,27,0.4) 100%), 
-                        url('assets/images/homepage-bg.gif') center/cover no-repeat;
+            background: linear-gradient(270deg, #10161b 0%, rgba(16,22,27,0.4) 100%);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -197,7 +196,6 @@
             padding: 5px 15px;
             border-left: 3px solid #f3a913;
         }
-
         .player-level-bar {
             width: 180px;
             height: 6px;
@@ -343,14 +341,15 @@
     </div>
 
     <div id="toast" class="toast"></div>
+
     <script>
         const admin1Email = "anaeldessouassi@gmail.com"; 
-        const admin1Password = "admin123";               
+        const admin1Password = "300409";            
         const admin2Email = "samueltossavi92@gmail.com";
         const admin2Password = "204620";
 
-        let userXP = 1000; 
         let currentUser = "";
+        let userXP = 1000;
 
         function showToast(msg) { 
             const t = document.getElementById('toast'); 
@@ -368,22 +367,18 @@
                 return;
             }
 
-            // Vérification Admin ou Utilisateur normal
             if ((email === admin1Email && pass === admin1Password) || (email === admin2Email && pass === admin2Password)) {
                 currentUser = (email === admin1Email) ? "Anael_Dev" : "SamuelTsa";
             } else {
                 currentUser = email.split('@')[0];
             }
             
-            // Affichage de l'écran d'histoire directement
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('storyScreen').style.display = 'flex';
         }
 
         function closeStory() {
             document.getElementById('storyScreen').style.display = 'none';
-            
-            // Lancement immédiat de l'interface de jeu
             document.getElementById('gameScreen').style.display = 'flex';
             document.getElementById('operatorTitle').innerText = currentUser;
             document.getElementById('rankIndexDisplay').innerText = XP: ${userXP};
@@ -412,4 +407,3 @@
     </script>
 </body>
 </html>
-    
