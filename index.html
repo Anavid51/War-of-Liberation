@@ -129,47 +129,50 @@
             cursor: pointer;
             clip-path: polygon(0 0, 95% 0, 100% 30%, 100% 100%, 5% 100%, 0 70%);
         }
+
         /* ==================== MODE HISTOIRE / BRIEFING ==================== */
         #storyScreen {
             display: none;
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
+            background: #05080c;
             z-index: 1000;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 60px;
+            padding: 40px;
             text-align: center;
         }
 
         .story-header {
-            font-size: 12px;
+            font-size: 13px;
             color: #f3a913;
             letter-spacing: 5px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-transform: uppercase;
         }
 
-        .story-text {
-            font-size: 24px;
-            max-width: 800px;
-            line-height: 1.6;
-            color: #fff;
+        .story-content-box {
+            background: #0b1118;
+            border: 1px solid #1c2630;
+            padding: 30px;
+            max-width: 750px;
+            margin-bottom: 35px;
+        }
+
+        .story-p {
+            font-size: 18px;
+            color: #ffffff;
             text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 50px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            letter-spacing: 0.5px;
         }
-
-        .typewriter-effect {
-            overflow: hidden;
-            border-right: 3px solid #f3a913;
-            white-space: normal;
-            margin: 0 auto;
-            animation: blink-caret .75s step-end infinite;
+        
+        .story-p.highlight {
+            color: #f3a913;
+            font-weight: 700;
         }
-
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #f3a913 } }
 
         /* ==================== LOBBY DU JEU ==================== */
         .game-screen {
@@ -246,7 +249,6 @@
         }
 
         .rank-badge { padding: 3px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.2); }
-        .rank-mareshall { background: linear-gradient(135deg, #f3a913 0%, #ff1744 100%); color: #fff; }
 
         .toast {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
@@ -254,9 +256,6 @@
             border-left: 4px solid #f3a913; display: none; z-index: 5000;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -264,8 +263,13 @@
         
         <div id="storyScreen">
             <div class="story-header">TRANSMISSION ENTRANTE : ANALYSE TACTIQUE</div>
-            <div id="typewriter" class="story-text"></div>
-            <button class="codm-btn" style="width: 250px;" onclick="closeStory()">ACCEPTER LA MISSION</button>
+            <div class="story-content-box">
+                <p class="story-p">Année 2026. L'histoire telle que nous la connaissons est en péril.</p>
+                <p class="story-p">Des forces obscures tentent de manipuler le passé pour déclencher une guerre mondiale totale.</p>
+                <p class="story-p highlight">OBJECTIF : Infiltrez la Grille Réseau, identifiez les points de rupture historiques et empêchez le chaos.</p>
+                <p class="story-p" style="font-size: 14px; color: #8a9ba8; margin-top: 20px;">Commandant, la libération ne se gagne pas... elle se construit par la stratégie.</p>
+            </div>
+            <button class="codm-btn" style="width: 280px;" onclick="closeStory()">ACCEPTER LA MISSION & DÉPLOYER</button>
         </div>
 
         <div id="authScreen" class="auth-screen">
@@ -287,7 +291,7 @@
                     <label>Clé Cryptographique</label>
                     <input type="password" id="passwordInput" class="codm-input" placeholder="PASSWORD">
                 </div>
-                <button class="codm-btn" onclick="handleAuth('login')">INITIALISER LA LIAISON</button>
+                <button class="codm-btn" onclick="handleAuth()">INITIALISER LA LIAISON</button>
             </div>
         </div>
 
@@ -298,7 +302,7 @@
                         <span class="player-name" id="operatorTitle">OPERATOR</span>
                         <div class="player-level-bar"><div id="levelProgress" class="level-progress"></div></div>
                     </div>
-                    <span id="statusDisplay" class="rank-badge rank-vanguard">Vanguard I</span>
+                    <span id="statusDisplay" class="rank-badge" style="background:#f3a913; color:#000;">Vanguard I</span>
                 </div>
                 <div class="topbar-right">
                     <span id="rankIndexDisplay" style="font-size: 13px; color: #8a9ba8;">XP: 1000</span>
@@ -308,20 +312,20 @@
 
             <div class="main-layout">
                 <div class="codm-tabs-side">
-                    <button class="codm-tab-btn active" onclick="switchTab('tab-matchmaking')">⚔️ Salon des modes</button>
-                    <button class="codm-tab-btn" onclick="switchTab('tab-caserne')">👥 Garnison</button>
+                    <button id="btn-matchmaking" class="codm-tab-btn active" onclick="switchTab('tab-matchmaking', this)">⚔️ Salon des modes</button>
+                    <button id="btn-caserne" class="codm-tab-btn" onclick="switchTab('tab-caserne', this)">👥 Garnison</button>
                 </div>
 
                 <div class="content-view">
-                    <div id="tab-matchmaking" class="tab-content active">
+                    <div id="tab-matchmaking" class="tab-content">
                         <div class="codm-modes-grid">
-                            <div class="codm-mode-card" style="border-left: 4px solid #ff1744;">
+                            <div class="codm-mode-card" style="border-left: 4px solid #ff1744; background: rgba(20,27,34,0.6);">
                                 <div class="mode-info">
                                     <div class="mode-text"><h3 style="color:#ff1744;">Battle of Liberation</h3><p>Conflit de faction massif.</p></div>
-                                    <button class="mode-action-btn" onclick="showToast('Chargement...')">Lancer</button>
+                                    <button class="mode-action-btn" onclick="showToast('Chargement de l\'opération...')">Lancer</button>
                                 </div>
                             </div>
-                            <div class="codm-mode-card" style="border-left: 4px solid #f3a913;">
+                            <div class="codm-mode-card" style="border-left: 4px solid #f3a913; background: rgba(20,27,34,0.6);">
                                 <div class="mode-info">
                                     <div class="mode-text"><h3>Parties Classées</h3><p>Compétition SBMM.</p></div>
                                     <button class="mode-action-btn" onclick="runSBMM()">Match</button>
@@ -329,79 +333,59 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div id="tab-caserne" class="tab-content" style="display:none;">
+                        <p style="color: #8a9ba8;">Garnison militaire opérationnelle. Aucun opérateur assigné pour le moment.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
-
     <script>
-        // CONFIGURATION ADMINS
         const admin1Email = "anaeldessouassi@gmail.com"; 
         const admin1Password = "admin123";               
         const admin2Email = "samueltossavi92@gmail.com";
         const admin2Password = "204620";
 
-        // SCÉNARIO DU JEU
-        const gameStory = [
-            "Année 2026. L'histoire telle que nous la connaissons est en péril.",
-            "Des forces obscures tentent de manipuler le passé pour déclencher une guerre mondiale totale.",
-            "Votre objectif est simple : Infiltrez la Grille Réseau, identifiez les points de rupture historiques et empêchez le chaos.",
-            "Commandant, la libération ne se gagne pas... elle se construit par la stratégie."
-        ];
+        let userXP = 1000; 
+        let currentUser = "";
 
-        let userRankIndex = 0; let userXP = 1000; let currentUser = "";
+        function showToast(msg) { 
+            const t = document.getElementById('toast'); 
+            t.innerText = msg; 
+            t.style.display = 'block'; 
+            setTimeout(() => t.style.display='none', 2000); 
+        }
 
-        function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display='none', 2000); }
-
-        function handleAuth(mode) {
+        function handleAuth() {
             const email = document.getElementById('usernameInput').value.trim();
             const pass = document.getElementById('passwordInput').value.trim();
-            if(!email || !pass) return;
-
-            if ((email === admin1Email && pass === admin1Password) || (email === admin2Email && pass === admin2Password)) {
-                currentUser = email === admin1Email ? "Anael_Dev" : "SamuelTsa";
-                userRankIndex = 34; // Max Rank
-                startStory(); // DÉCLENCHE LE MODE HISTOIRE
+            
+            if(!email || !pass) {
+                showToast("Veuillez remplir tous les champs.");
                 return;
             }
-            currentUser = email.split('@')[0];
-            startStory();
-        }
 
-        // --- GESTION DU MODE HISTOIRE ---
-        function startStory() {
+            // Vérification Admin ou Utilisateur normal
+            if ((email === admin1Email && pass === admin1Password) || (email === admin2Email && pass === admin2Password)) {
+                currentUser = (email === admin1Email) ? "Anael_Dev" : "SamuelTsa";
+            } else {
+                currentUser = email.split('@')[0];
+            }
+            
+            // Affichage de l'écran d'histoire directement
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('storyScreen').style.display = 'flex';
-            typeWriter(gameStory.join(" "));
         }
 
-        function typeWriter(text) {
-            let i = 0;
-            const target = document.getElementById('typewriter');
-            target.innerHTML = "";
-            function typing() {
-                if (i < text.length) {
-                    target.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(typing, 30); // Vitesse de la machine à écrire
-                }
-            }
-            typing();
-        }
         function closeStory() {
             document.getElementById('storyScreen').style.display = 'none';
-            setupGameUI();
-        }
-
-        function setupGameUI() {
+            
+            // Lancement immédiat de l'interface de jeu
             document.getElementById('gameScreen').style.display = 'flex';
             document.getElementById('operatorTitle').innerText = currentUser;
-            updateUserRank();
-        }
-
-        function updateUserRank() {
             document.getElementById('rankIndexDisplay').innerText = XP: ${userXP};
             document.getElementById('levelProgress').style.width = 80%;
         }
@@ -409,15 +393,23 @@
         function logout() {
             document.getElementById('gameScreen').style.display = 'none';
             document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('usernameInput').value = "";
+            document.getElementById('passwordInput').value = "";
         }
 
-        function switchTab(id) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        function switchTab(tabId, element) {
+            document.getElementById('tab-matchmaking').style.display = 'none';
+            document.getElementById('tab-caserne').style.display = 'none';
             document.querySelectorAll('.codm-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            
+            document.getElementById(tabId).style.display = 'block';
+            element.classList.add('active');
+        }
+
+        function runSBMM() {
+            showToast("Recherche d'opposants en cours...");
         }
     </script>
 </body>
 </html>
-        
+    
