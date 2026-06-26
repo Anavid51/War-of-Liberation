@@ -14,6 +14,7 @@
             font-family: 'Oswald', 'Segoe UI', sans-serif;
         }
 
+        /* FOND D'ÉCRAN MILITAIRE ANIMÉ (Style CODM) */
         body {
             background-color: #040506;
             color: #ffffff;
@@ -25,18 +26,87 @@
             position: relative;
         }
 
+        /* Grille de ciblage tactique en mouvement constant */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%; height: 200%;
+            top: -50%; left: -50%;
+            background-image: 
+                linear-gradient(rgba(243,169,19,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(243,169,19,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: tacticalGridMove 25s linear infinite;
+            z-index: -2;
+        }
+
+        /* Pulsation radar circulaire en arrière-plan */
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(243,169,19,0.06) 0%, transparent 70%);
+            animation: radarPulse 6s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes tacticalGridMove {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(60px, 60px) rotate(0.5deg); }
+        }
+
+        @keyframes radarPulse {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.6); opacity: 0.9; }
+        }
+
         .container {
             width: 100vw;
             height: 100vh;
             max-width: 1200px;
             max-height: 750px;
-            background: rgba(16, 22, 27, 0.95);
+            background: rgba(12, 17, 22, 0.92);
             border: 2px solid #2d3842;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ==================== LOGO OFFICIEL DU JEU ==================== */
+        .game-logo-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .military-shield {
+            width: 90px;
+            height: 100px;
+            background: linear-gradient(180deg, #1a242d 0%, #0d1318 100%);
+            border: 3px solid #f3a913;
+            clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(243, 169, 19, 0.3);
+            animation: shieldGlow 4s ease-in-out infinite;
+        }
+
+        .military-shield::before {
+            content: '★';
+            font-size: 42px;
+            color: #f3a913;
+            text-shadow: 0 0 15px rgba(243, 169, 19, 0.8);
+        }
+
+        @keyframes shieldGlow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(243, 169, 19, 0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 0 35px rgba(243, 169, 19, 0.5); }
         }
 
         /* ==================== AUTH SCREEN ==================== */
@@ -48,12 +118,13 @@
 
         .auth-cinematic {
             flex: 1.2;
-            background: #10161b;
+            background: linear-gradient(135deg, rgba(16, 22, 27, 0.85) 0%, rgba(4, 5, 6, 0.95) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 40px;
+            border-right: 1px solid rgba(45, 56, 66, 0.5);
         }
 
         .auth-form-side {
@@ -66,21 +137,18 @@
             border-left: 2px solid #2d3842;
         }
 
-        .codm-logo-box {
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
         .codm-title {
-            font-size: 46px;
-            font-weight: 800;
+            font-size: 52px;
+            font-weight: 900;
             line-height: 0.85;
             text-transform: uppercase;
             color: #ffffff;
+            text-align: center;
+            letter-spacing: 3px;
             margin-top: 15px;
         }
 
-        .codm-title span { color: #f3a913; }
+        .codm-title span { color: #f3a913; text-shadow: 0 0 12px rgba(243,169,19,0.5); }
 
         .form-group label {
             display: block;
@@ -88,6 +156,7 @@
             text-transform: uppercase;
             color: #f3a913;
             margin-bottom: 6px;
+            letter-spacing: 1px;
         }
 
         .codm-input {
@@ -97,7 +166,10 @@
             border: 1px solid #334454;
             color: #fff;
             margin-bottom: 15px;
+            outline: none;
         }
+
+        .codm-input:focus { border-color: #f3a913; }
 
         .codm-btn {
             width: 100%;
@@ -108,9 +180,13 @@
             font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
         }
 
-        /* ==================== STORY SCREEN ==================== */
+        .codm-btn:hover { background: #d6930f; }
+        .codm-btn:active { transform: scale(0.98); }
+
+        /* ==================== ÉCRAN HISTOIRE ==================== */
         #storyScreen {
             display: none;
             position: absolute;
@@ -121,7 +197,6 @@
             justify-content: center;
             align-items: center;
             padding: 40px;
-            text-align: center;
         }
 
         .story-header {
@@ -147,10 +222,9 @@
             margin-bottom: 15px;
             line-height: 1.5;
         }
-        
         .story-p.highlight { color: #f3a913; font-weight: 700; }
 
-        /* ==================== GAME LOBBY ==================== */
+        /* ==================== GAME LOBBY PRINCIPAL ==================== */
         .game-screen {
             display: none;
             width: 100%;
@@ -167,11 +241,11 @@
             justify-content: space-between;
             padding: 0 30px;
         }
-
         .player-tag {
             background: #1a242d;
             padding: 5px 15px;
             border-left: 3px solid #f3a913;
+            font-weight: 700;
         }
 
         .main-layout { display: flex; flex: 1; }
@@ -194,25 +268,62 @@
 
         .codm-tab-btn.active { color: #000; background: #f3a913; }
 
-        .content-view { flex: 1; padding: 25px; background: #10161b; }
+        .content-view { flex: 1; padding: 25px; }
 
         .codm-modes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
         .codm-mode-card {
-            height: 180px; position: relative; border: 1px solid #2d3842;
-            background: rgba(20,27,34,0.6); display: flex; align-items: flex-end; padding: 20px;
+            height: 200px; 
+            border: 1px solid #2d3842;
+            background: linear-gradient(135deg, rgba(20,27,34,0.92) 0%, rgba(10,14,18,0.97) 100%); 
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px;
+        }
+
+        /* Écran de déploiement interactif */
+        .deployment-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #040608;
+            z-index: 5000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-container {
+            width: 320px; height: 5px;
+            background: #141b22; border: 1px solid #334454;
+            margin-top: 25px; overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%; height: 100%;
+            background: #f3a913;
+            box-shadow: 0 0 10px #f3a913;
         }
 
         .toast {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
             background: #0b0f13; color: white; padding: 12px 25px;
-            border-left: 4px solid #f3a913; display: none; z-index: 5000;
+            border-left: 4px solid #f3a913; display: none; z-index: 9999;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <div id="deploymentOverlay" class="deployment-overlay">
+            <div class="story-header" style="letter-spacing: 3px;">INITIALISATION DU SYSTÈME RÉSEAU...</div>
+            <div style="font-size: 26px; font-weight: 700; letter-spacing: 2px; color: #ffffff;" id="deployStatus">CHARGEMENT DE LA MAP</div>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+
         <div id="storyScreen">
             <div class="story-header">TRANSMISSION ENTRANTE</div>
             <div class="story-content-box">
@@ -224,6 +335,9 @@
 
         <div id="authScreen" class="auth-screen">
             <div class="auth-cinematic">
+                <div class="game-logo-box">
+                    <div class="military-shield"></div>
+                </div>
                 <h1 class="codm-title">WAR OF<br><span>LIBERATION</span></h1>
             </div>
             <div class="auth-form-side">
@@ -239,8 +353,8 @@
 
         <div id="gameScreen" class="game-screen">
             <div class="codm-topbar">
-                <div class="player-tag"><span id="operatorTitle">OPERATOR</span></div>
-                <button onclick="logout()" style="background: transparent; border: 1px solid #334454; color: #fff; padding: 5px 12px; cursor: pointer;">DISCONNECT</button>
+                <div class="player-tag">🟢 <span id="operatorTitle">OPERATOR</span></div>
+                <button onclick="logout()" style="background: transparent; border: 1px solid #334454; color: #fff; padding: 5px 12px; cursor: pointer; text-transform: uppercase;">Déconnexion</button>
             </div>
             <div class="main-layout">
                 <div class="codm-tabs-side">
@@ -250,9 +364,10 @@
                     <div class="codm-modes-grid">
                         <div class="codm-mode-card">
                             <div>
-                                <h3 style="color:#ff1744;">Battle of Liberation</h3>
-                                <button class="codm-btn" style="padding: 5px 10px; margin-top: 10px;" onclick="showToast('Déploiement...')">Lancer</button>
+                                <h3 style="color:#ff1744; font-size: 24px; text-transform: uppercase;">Battle of Liberation</h3>
+                                <p style="color: #7a8c9e; font-size: 14px; margin-top: 6px;">Déploiement immédiat en zone de conflit.</p>
                             </div>
+                            <button class="codm-btn" style="padding: 12px; width: 160px;" onclick="startDeployment()">Lancer</button>
                         </div>
                     </div>
                 </div>
@@ -263,17 +378,20 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        const admin1Email = "anaeldessouassi@gmail.com"; 
+        // CONFIGURATION DES IDENTIFIANTS ADMINISTRATEURS
+        const admin1Email = "Anaelkiller"; 
         const admin1Password = "300409";            
+        
         const admin2Email = "samueltossavi92@gmail.com";
         const admin2Password = "204620";
 
         let currentUser = "";
+
         function showToast(msg) { 
             const t = document.getElementById('toast'); 
             t.innerText = msg; 
             t.style.display = 'block'; 
-            setTimeout(() => t.style.display='none', 2000); 
+            setTimeout(() => t.style.display='none', 2500); 
         }
 
         function handleAuth() {
@@ -281,7 +399,7 @@
             const pass = document.getElementById('passwordInput').value.trim();
             
             if(!email || !pass) {
-                showToast("Veuillez remplir tous les champs.");
+                showToast("Veuillez renseigner vos identifiants réseau.");
                 return;
             }
 
@@ -301,6 +419,33 @@
             document.getElementById('operatorTitle').innerText = currentUser;
         }
 
+        function startDeployment() {
+            const overlay = document.getElementById('deploymentOverlay');
+            const bar = document.getElementById('progressBar');
+            const statusText = document.getElementById('deployStatus');
+            
+            overlay.style.display = 'flex';
+            let progress = 0;
+            
+            const pipeline = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(pipeline);
+                    statusText.innerText = "CONNEXION ÉTABLIE !";
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        bar.style.width = '0%';
+                        showToast("Lancement réussi. Préparez-vous au combat.");
+                    }, 800);
+                } else {
+                    progress += 4;
+                    bar.style.width = progress + '%';
+                    if(progress === 28) statusText.innerText = "CHARGEMENT DES INFRASTRUCTURES TACTIQUES";
+                    if(progress === 64) statusText.innerText = "SYNCHRONISATION DES SERVEURS DE JEU";
+                    if(progress === 88) statusText.innerText = "SÉCURISATION DE LA LIAISON SATELLITE";
+                }
+            }, 60);
+        }
+
         function logout() {
             document.getElementById('gameScreen').style.display = 'none';
             document.getElementById('authScreen').style.display = 'flex';
@@ -310,4 +455,3 @@
     </script>
 </body>
 </html>
-        
